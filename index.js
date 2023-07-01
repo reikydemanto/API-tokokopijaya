@@ -7,25 +7,27 @@ const response = require("./response");
 
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  db.query("select * from mahasiswa", (error, result) => {
+app.get("/:outlet", (req, res) => {
+  const outlet = req.params.outlet;
+  const sqlPertama = `select * from outlet where NAMA_OUTLET != '${outlet}'`;
+  db.query(sqlPertama, (error, result) => {
     response(200, result, "SUCCES", res);
   });
 });
-app.post("/", (req, res) => {
-  response(200, "ini data", "ini pesan post", res);
-});
-app.put("/", (req, res) => {
-  response(200, "ini data", "ini pesan put", res);
-});
-app.delete("/", (req, res) => {
-  response(200, "ini data", "ini pesan delete", res);
+
+app.get("/pertama/:outlet", (req, res) => {
+  const outlet = req.params.outlet;
+  const sql = `SELECT * FROM outlet WHERE NAMA_OUTLET = '${outlet}'`;
+  db.query(sql, (error, result) => {
+    response(200, result, "SUCCES", res);
+  });
 });
 
-app.get("/", (req, res) => {
-  const sql = "Select * From Mahasiswa";
+app.get("/menu/:outlet", (req, res) => {
+  const outlet = req.params.outlet;
+  const sql = `SELECT * from outlet,memiliki,menu,kategori_menu WHERE memiliki.NAMA_OUTLET = '${outlet}' AND outlet.NAMA_OUTLET = memiliki.NAMA_OUTLET AND memiliki.NAMA_MENU = menu.NAMA_MENU and menu.NAMA_KATEGORI = kategori_menu.NAMA_KATEGORI ORDER BY kategori_menu.URUTAN ASC , menu.URUTAN ASC`;
   db.query(sql, (error, result) => {
-    response(200, result, "get data from mahasiswa", res);
+    response(200, result, "SUCCES", res);
   });
 });
 
